@@ -1,61 +1,42 @@
-# Báo cáo môn học: Hệ Thống Nhúng Nâng Cao
+Báo cáo môn học: Hệ Thống Nhúng Nâng Cao
+Đề tài: Training and Optimization of SSDLite MobileNetV3 for Vehicle Detection on Embedded Systems
+Thành viên thực hiện
 
-## Đề tài
-**Training and Optimization of SSD Lite MobileNet V2 for Vehicle Detection on Embedded Systems**
+Bùi Nguyễn Hoài Thương
 
-Đề tài tập trung vào:
-- Huấn luyện mô hình **SSD Lite MobileNet V2** trên dữ liệu phương tiện giao thông tại Việt Nam  
-- Tối ưu mô hình bằng **Pruning** và **Quantization (INT8)**  
-- Chuyển đổi mô hình sang **TF-Lite / ONNX / TensorRT**  
-- Kiểm thử mô hình trên nền tảng **hệ thống nhúng**  
-- Đánh giá hiệu năng thông qua mAP, FPS và kích thước mô hình  
+Trương Vũ Hoàng Anh
 
----
+Phạm Thanh Toàn
 
-## Học viên thực hiện
-- **Bùi Nguyễn Hoài Thương**  
-- **Trương Vũ Hoàng Anh**  
-- **Phạm Thanh Toàn**
+Mô tả các file trong thư mục
+Retrain_Prunning_Quantization.ipynb
 
----
+Notebook chính của dự án.
+Chứa toàn bộ quy trình fine-tuning, pruning bằng torch-pruning, và export ONNX FP32/INT8.
 
-## 🎥 Video Test  
-Video kiểm thử mô hình trên dữ liệu thực tế:
+Test_FPS.py
 
-🔗 https://drive.google.com/file/d/1TqE110X4sbsguWQiXTFAC9JnlVz-g0zL/view?usp=sharing
+Script đo FPS.
+Load model, chạy inference trên video, vẽ bounding box và tính tốc độ khung hình thực tế.
 
----
+ssdlite320_mbv3_finetuned_full.pth
 
-## 📄 Nội dung chính của đồ án
+Mô hình PyTorch sau khi fine-tune (baseline FP32, chưa prune).
 
-### 1. Chuẩn bị và tiền xử lý dữ liệu
-- Chuyển đổi dataset gốc sang **COCO-style**  
-- Sinh file **TFRecord** để train trên TensorFlow  
-- Sinh dataset COCO JSON để optimize bằng PyTorch  
+ssdlite320_mbv3_pruned_finetuned_full.pth
 
-### 2. Training & Fine-tuning
-- Sử dụng mô hình **SSD Lite MobileNet V2 FPNLite 320×320 pretrained COCO**  
-- Fine-tune trên bộ dữ liệu **Vehicle Vietnam – Cần Thơ**  
-- Huấn luyện với optimizer Momentum + Cosine LR Decay  
+Mô hình PyTorch đã được prune và train lại, dùng để xuất ONNX.
 
-### 3. Đánh giá Baseline
-- Tính toán **mAP (COCO metrics)**  
-- Đo **FPS** trên GPU/CPU  
-- Lưu mô hình baseline FP32  
+ssd_pruned_fp32.onnx
 
-### 4. Pruning (PyTorch)
-- Áp dụng **Structured Channel Pruning**  
-- Giảm FLOPs và số tham số  
-- Fine-tune lại để phục hồi accuracy  
+Mô hình ONNX sau pruning, định dạng FP32.
+Dùng để benchmark hoặc làm bước trung gian trước INT8.
 
-### 5. Quantization (ONNX INT8)
-- Export mô hình sang ONNX FP32  
-- Áp dụng **Post-training Dynamic Quantization**  
-- Tối ưu kích thước mô hình phục vụ nhúng  
+ssd_pruned_int8.onnx
 
-### 6. Đánh giá mô hình tối ưu
-  
+Mô hình ONNX INT8 sau quantization.
+Kích thước nhỏ, chạy nhanh, phù hợp triển khai nhúng.
 
----
+README.md
 
-
+Tài liệu mô tả dự án và hướng dẫn sử dụng.
