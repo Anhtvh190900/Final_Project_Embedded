@@ -50,12 +50,3 @@ The project employs the following core techniques:
 
 ---
 
-## Getting Started (Quick Start)
-
-1.  **Environment:** Ensure $\text{PyTorch}$, $\text{torch-pruning}$, and $\text{ONNX/OpenCV}$ libraries are installed.
-2.  **Training/Optimization:** Open and run the **`Retrain_Prunning_Quantization.ipynb`** Notebook sequentially to reproduce the optimized models.
-3.  **FPS Testing:** Modify the video path in the **`Test_FPS.py`** script and run it to benchmark the real-time processing speed of the optimized $\text{INT8}$ model.
-
-```bash
-# Example command to run the FPS testing script (after ssd_pruned_int8.onnx is generated)
-python Test_FPS.py --model_path ssd_pruned_int8.onnx --video_source my_video.mp4
