@@ -1,61 +1,61 @@
-# Tối Ưu Hóa và Huấn Luyện Mô Hình SSDLite MobileNetV3 Cho Phát Hiện Phương Tiện Trên Hệ Thống Nhúng
+# Training and Optimization of SSDLite MobileNetV3 for Vehicle Detection on Embedded Systems
 
-Đây là dự án môn học **Hệ Thống Nhúng Nâng Cao**, tập trung vào việc huấn luyện, tối ưu hóa (Pruning và Quantization) mô hình $\text{SSDLite MobileNetV3}$ để đạt hiệu suất cao (tốc độ xử lý cao, kích thước nhỏ) khi triển khai trên các nền tảng nhúng.
-
----
-
-## 🎯 Mục Tiêu Dự Án
-
-Mục tiêu chính của dự án là tối ưu hóa mô hình $\text{SSDLite MobileNetV3}$ cho tác vụ **Phát hiện Phương tiện Giao thông** để đáp ứng các tiêu chí triển khai trên thiết bị nhúng:
-
-1.  **Tăng tốc độ Inference (FPS)**: Giảm độ trễ xử lý.
-2.  **Giảm kích thước mô hình**: Tối ưu hóa bộ nhớ.
-3.  **Duy trì độ chính xác (mAP)**: Giảm thiểu sự suy giảm hiệu suất sau tối ưu hóa.
+This project, part of the **Advanced Embedded Systems** course, focuses on training and optimizing the $\text{SSDLite MobileNetV3}$ model using Channel Pruning and Quantization techniques. The goal is to achieve high performance (fast inference speed, small size) for deployment on resource-constrained embedded platforms.
 
 ---
 
-## 🛠️ Phương Pháp Luận và Công Cụ
+## Project Goals
 
-Dự án áp dụng các kỹ thuật chính sau:
+The primary objective is to optimize the $\text{SSDLite MobileNetV3}$ model for **Vehicle Detection** to meet embedded system deployment criteria:
 
-| Giai đoạn | Kỹ thuật | Công cụ chính | Mô tả |
+1.  **Increase Inference Speed (FPS)**: Minimize processing latency.
+2.  **Reduce Model Size**: Optimize memory footprint.
+3.  **Maintain Detection Accuracy (mAP)**: Minimize performance degradation after optimization.
+
+---
+
+## Methodology and Key Tools
+
+The project employs the following core techniques:
+
+| Phase | Technique | Key Tool | Description |
 | :--- | :--- | :--- | :--- |
-| **1. Huấn luyện** | Fine-Tuning | PyTorch | Huấn luyện mô hình $\text{SSDLite MobileNetV3}$ trên tập dữ liệu phương tiện giao thông để tạo ra mô hình $\text{baseline}$ (FP32). |
-| **2. Tối ưu hóa** | Pruning Kênh | $\text{torch-pruning}$ | Cắt bỏ $\text{20%}$ kênh ít quan trọng nhất trên toàn mạng theo chiến lược **Global Pruning** (Norm L1). |
-| **3. Định dạng** | Quantization | ONNX | Chuyển đổi mô hình $\text{FP32}$ đã prune sang định dạng $\text{INT8}$ để giảm $\text{4x}$ kích thước và tăng tốc độ inference. |
-| **4. Triển khai** | Inference & Benchmark | Python, OpenCV | Đánh giá tốc độ xử lý thực tế ($\text{FPS}$) của các phiên bản mô hình ($\text{FP32}$ và $\text{INT8}$). |
+| **1. Training** | Fine-Tuning | PyTorch | Fine-tuning the $\text{SSDLite MobileNetV3}$ model on a vehicle detection dataset to establish an $\text{FP32 baseline}$. |
+| **2. Optimization** | Channel Pruning | $\text{torch-pruning}$ | Removing $\text{20%}$ of the least important channels across the network using the **Global Pruning** strategy ($\text{L1}$ Norm based). |
+| **3. Format Conversion** | Quantization | ONNX | Converting the pruned $\text{FP32}$ model to the $\text{INT8}$ format to achieve up to $\text{4x}$ size reduction and inference acceleration. |
+| **4. Deployment** | Inference & Benchmark | Python, OpenCV | Evaluating the real-world processing speed ($\text{FPS}$) of the optimized $\text{INT8}$ model. |
 
 ---
 
-## 📂 Cấu Trúc Thư Mục và Mô Tả Tệp
+## Project Structure and File Descriptions
 
-| Tệp/Thư mục | Mô tả | Giai đoạn |
+| File/Folder | Description | Phase Output |
 | :--- | :--- | :--- |
-| **`Retrain_Prunning_Quantization.ipynb`** | **Notebook chính**. Chứa toàn bộ quy trình: Fine-tuning, Pruning, Finetuning sau Pruning và $\text{Export}$ mô hình sang $\text{ONNX}$ ($\text{FP32}$ và $\text{INT8}$). | Toàn bộ quy trình |
-| **`Test_FPS.py`** | Script thực thi. Dùng để $\text{Load}$ mô hình ($\text{ONNX}$), chạy $\text{inference}$ trên video, vẽ $\text{bounding box}$ và tính toán **tốc độ khung hình thực tế** ($\text{FPS}$). | Đánh giá/Triển khai |
-| **`ssdlite320_mbv3_finetuned_full.pth`** | Mô hình $\text{PyTorch}$ **Baseline** sau $\text{Fine-tune}$ ($\text{FP32}$, chưa $\text{prune}$). | Output Giai đoạn 1 |
-| **`ssdlite320_mbv3_pruned_finetuned_full.pth`** | Mô hình $\text{PyTorch}$ đã được **Prune** và **Train lại** ($\text{Finetune}$ phục hồi). Đây là mô hình nguồn để $\text{Export}$ sang $\text{ONNX}$. | Output Giai đoạn 2 |
-| **`ssd_pruned_fp32.onnx`** | Mô hình $\text{ONNX}$ sau $\text{Pruning}$, định dạng **$\text{FP32}$**. Dùng để $\text{benchmark}$ $\text{FP32}$ sau $\text{pruning}$. | Output Giai đoạn 3 |
-| **`ssd_pruned_int8.onnx`** | Mô hình $\text{ONNX}$ sau $\text{Quantization}$ định dạng **$\text{INT8}$**. Kích thước nhỏ, tốc độ cao, sẵn sàng triển khai trên hệ thống nhúng. | Output Giai đoạn 3 |
+| **`Retrain_Prunning_Quantization.ipynb`** | **Main Project Notebook**. Contains the complete pipeline: Fine-tuning, Pruning, Post-Pruning Finetuning, and $\text{Export}$ to $\text{ONNX}$ ($\text{FP32}$ and $\text{INT8}$). | Full Pipeline |
+| **`Test_FPS.py`** | Execution Script. Used to $\text{Load}$ the $\text{ONNX}$ model, run $\text{inference}$ on a video stream, draw $\text{bounding boxes}$, and calculate the **real-time Frame Per Second ($\text{FPS}$)**. | Evaluation/Deployment |
+| **`ssdlite320_mbv3_finetuned_full.pth`** | The $\text{PyTorch}$ **Baseline Model** after $\text{Fine-tune}$ ($\text{FP32}$, unpruned). | Phase 1 Output |
+| **`ssdlite320_mbv3_pruned_finetuned_full.pth`** | The $\text{PyTorch}$ model that has been **Pruned** and subsequently **Finetuned** for performance recovery. This is the source model for $\text{ONNX}$ export. | Phase 2 Output |
+| **`ssd_pruned_fp32.onnx`** | The $\text{ONNX}$ model after $\text{Pruning}$, in **$\text{FP32}$** format. Used for $\text{FP32}$ post-pruning $\text{benchmarking}$. | Phase 3 Output |
+| **`ssd_pruned_int8.onnx`** | The $\text{ONNX}$ model after $\text{Quantization}$ in **$\text{INT8}$** format. Small size, high speed, and ready for embedded deployment. | Phase 3 Output |
 
 ---
 
-## 👥 Thành Viên Thực Hiện
+## Project Team
 
-| Tên thành viên | Mã số sinh viên |
-| :--- | :--- |
-| Bùi Nguyễn Hoài Thương | (Điền MSV) |
-| Trương Vũ Hoàng Anh | (Điền MSV) |
-| Phạm Thanh Toàn | (Điền MSV) |
+| Member Name |
+| :--- |
+| Bùi Nguyễn Hoài Thương |
+| Trương Vũ Hoàng Anh |
+| Phạm Thanh Toàn |
 
 ---
 
-## 🏃 Hướng Dẫn Sử Dụng (Quick Start)
+## Getting Started (Quick Start)
 
-1.  **Môi trường:** Đảm bảo bạn đã cài đặt $\text{PyTorch}$, $\text{torch-pruning}$ và các thư viện hỗ trợ $\text{ONNX/OpenCV}$.
-2.  **Huấn luyện/Tối ưu hóa:** Mở và chạy $\text{Notebook}$ **`Retrain_Prunning_Quantization.ipynb`** theo trình tự các bước để tái tạo các mô hình tối ưu.
-3.  **Kiểm tra FPS:** Chỉnh sửa đường dẫn video trong $\text{Script}$ **`Test_FPS.py`** và chạy để đánh giá tốc độ xử lý thực tế của mô hình $\text{INT8}$ đã tối ưu.
+1.  **Environment:** Ensure $\text{PyTorch}$, $\text{torch-pruning}$, and $\text{ONNX/OpenCV}$ libraries are installed.
+2.  **Training/Optimization:** Open and run the **`Retrain_Prunning_Quantization.ipynb`** Notebook sequentially to reproduce the optimized models.
+3.  **FPS Testing:** Modify the video path in the **`Test_FPS.py`** script and run it to benchmark the real-time processing speed of the optimized $\text{INT8}$ model.
 
 ```bash
-# Ví dụ chạy script kiểm tra FPS (sau khi có file ssd_pruned_int8.onnx)
+# Example command to run the FPS testing script (after ssd_pruned_int8.onnx is generated)
 python Test_FPS.py --model_path ssd_pruned_int8.onnx --video_source my_video.mp4
